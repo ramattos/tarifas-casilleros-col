@@ -28,6 +28,7 @@
   var vfact = 0.00;
   var vdecl = 0.00;
   var pesol = 0.00;
+  var pesold = 0.00;
   var impv = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
   var vale = 0.00;
   var totals = [ 0.00, 0.00, 0.00 ];
@@ -137,13 +138,14 @@
 		vfact = document.getElementsByName('vfact')[0].value;
 		vdecl = document.getElementsByName('vdecl')[0].value;
 		pesol = document.getElementsByName('pesol')[0].value;
+		pesold = pesol;
 		fuebog = document.getElementsByName('fuebog')[0].value
 		
 		//round pesol
 		pesol = Math.ceil(pesol);
 		
 		//calculate 4-72 arancel, IVA
-		if (pesol <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
+		if (pesold <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
 		else if (vfact <= 200) { impv[0] = vfact*0.1; impv[1] = 0.00; }
 		else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
 		
@@ -162,7 +164,7 @@
 		//assign values in table
 		document.getElementById("results-row-1").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[5].innerHTML = parseFloat(vfact).toFixed(2);
-		document.getElementById("results-row-1").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
+		document.getElementById("results-row-1").childNodes[7].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-1").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-1").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
 		document.getElementById("results-row-1").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
@@ -183,7 +185,7 @@
 		//assign values in table
 		document.getElementById("results-row-2").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-2").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
+		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-2").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-2").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
 		document.getElementById("results-row-2").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
@@ -204,7 +206,7 @@
 		//assign values in table
 		document.getElementById("results-row-3").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-3").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
+		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-3").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-3").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
 		document.getElementById("results-row-3").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
