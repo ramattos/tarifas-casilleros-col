@@ -280,7 +280,7 @@
 		//assign values in table
 		document.getElementById("results-row-2").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-2").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-2").childNodes[7].innerHTML = "100.00";
+		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(Math.min(100.00,vaseg)).toFixed(2);
 		document.getElementById("results-row-2").childNodes[9].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-2").childNodes[11].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-2").childNodes[13].innerHTML = parseFloat(impv[1]).toFixed(2);
@@ -303,7 +303,7 @@
 		//assign values in table
 		document.getElementById("results-row-3").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-3").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-3").childNodes[7].innerHTML = "100.00";
+		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(Math.min(100.00,vaseg)).toFixed(2);
 		document.getElementById("results-row-3").childNodes[9].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-3").childNodes[11].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-3").childNodes[13].innerHTML = parseFloat(impv[1]).toFixed(2);
