@@ -5,7 +5,7 @@
   
   .title { text-align: center; }
   
-  .parameters { width: 600px; margin-left: auto; margin-right: auto; }
+  .parameters { width: 800px; margin-left: auto; margin-right: auto; }
   
   .results { margin-top: 40px; width: 100%; margin-left: auto; margin-right: auto; }
   
@@ -28,13 +28,10 @@
   var vfact = 0.00;
   var vdecl = 0.00;
   var pesol = 0.00;
-  var imp472 = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
-  var val472 = 0.00;
-  var imiecv = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
-  var vaiecv = 0.00;
-  var impiec = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
-  var valiec = 0.00;
+  var impv = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
+  var vale = 0.00;
   var totals = [ 0.00, 0.00, 0.00 ];
+  var fuebog = false;
 </script>
 </head>
 <body>
@@ -52,14 +49,15 @@
 	  <tr>
 		<th>Valor declarado (en USD):</th>
 		<td><input type="number" name="vdecl" min="0.01" max="2000" step="0.01" value="0.01" disabled></td>
-		<td><input type="checkbox" name="vdcheck" checked>Igual</td>
+		<td><label><input type="checkbox" name="vdcheck" checked>Igual</label></td>
 	  </tr>
 	  <tr>
 	    <th>Peso (en libras):</th>
-		<td colspan="2"><input type="number" min="0.01" max="150.00" step="0.01" name="pesol" value="0.01" /></td>
+		<td><input type="number" min="0.01" max="110.00" step="0.01" name="pesol" value="0.01" /></td>
+		<td><label><input type="checkbox" name="fuebog" value="" >¿Fuera de Bogot&aacute;?</label></td>
 	  </tr>
 	  <tr>
-		<td colspan="3" style="text-align: center"; id="validation" style="color: red;">&nbsp;</td>
+		<td colspan="3" style="text-align: center;" id="validation" style="color: red;">&nbsp;</td>
 	  </tr>
 	  <tr>
 		<td colspan="3" style="text-align: center";><button type="button" id="run">Calcular</button></td>
@@ -139,77 +137,78 @@
 		vfact = document.getElementsByName('vfact')[0].value;
 		vdecl = document.getElementsByName('vdecl')[0].value;
 		pesol = document.getElementsByName('pesol')[0].value;
+		fuebog = document.getElementsByName('fuebog')[0].value
 		
 		//round pesol
 		pesol = Math.ceil(pesol);
 		
 		//calculate 4-72 arancel, IVA
-		if (pesol <= 4.40) { imp472[0] = 0.00; imp472[1] = 0.00; }
-		else if (vfact <= 200) { imp472[0] = vfact*0.1; imp472[1] = 0.00; }
-		else { imp472[0] = vfact*0.1; imp472[1] = vfact*0.19; }
+		if (pesol <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
+		else if (vfact <= 200) { impv[0] = vfact*0.1; impv[1] = 0.00; }
+		else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
 		
 		//calculate seguro
-		if (vfact > 100) imp472[2] = vfact*0.01;
-		else imp472[2] = 0.00;
+		if (vfact > 100) impv[2] = vfact*0.01;
+		else impv[2] = 0.00;
 		
 		//calculate shipping cost
-		val472 = 5;
-		if (pesol <= 4.00) { val472 += ((pesol-1)*3); }
-		else { val472 += (9.2+((pesol-4)*2)); }
+		vale = 5;
+		if (pesol <= 4.00) { vale += ((pesol-1)*3); }
+		else { vale += (9.2+((pesol-4)*2)); }
 		
 		//calculate total
-		totals[0] = val472 + imp472[0] + imp472[1] + imp472[2];
+		totals[0] = vale + impv[0] + impv[1] + impv[2];
 		
 		//assign values in table
 		document.getElementById("results-row-1").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[5].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
-		document.getElementById("results-row-1").childNodes[9].innerHTML = parseFloat(imp472[0]).toFixed(2);
-		document.getElementById("results-row-1").childNodes[11].innerHTML = parseFloat(imp472[1]).toFixed(2);
-		document.getElementById("results-row-1").childNodes[13].innerHTML = parseFloat(imp472[2]).toFixed(2);
-		document.getElementById("results-row-1").childNodes[15].innerHTML = parseFloat(val472).toFixed(2);
+		document.getElementById("results-row-1").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
+		document.getElementById("results-row-1").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
+		document.getElementById("results-row-1").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
+		document.getElementById("results-row-1").childNodes[15].innerHTML = parseFloat(vale).toFixed(2);
 		document.getElementById("results-row-1").childNodes[17].innerHTML = parseFloat(totals[0]).toFixed(2);
 		
 		//calculate IEC arancel, IVA
-		imp472[0] = vdecl*0.1;
-		imp472[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
-		imp472[2] = Math.ceil(vdecl/100)*5;
+		impv[0] = vdecl*0.1;
+		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
+		impv[2] = Math.ceil(vdecl/100)*5;
 		
 		//calculate shipping cost
-		val472 = pesol <= 10 ? 17 : 17+(pesol-10)*1.7
+		vale = pesol <= 10 ? 17 : 17+(pesol-10)*1.7
 		
 		//calculate total
-		totals[0] = val472 + imp472[0] + imp472[1] + imp472[2];
+		totals[0] = vale + impv[0] + impv[1] + impv[2];
 		
 		//assign values in table
 		document.getElementById("results-row-2").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-2").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
 		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
-		document.getElementById("results-row-2").childNodes[9].innerHTML = parseFloat(imp472[0]).toFixed(2);
-		document.getElementById("results-row-2").childNodes[11].innerHTML = parseFloat(imp472[1]).toFixed(2);
-		document.getElementById("results-row-2").childNodes[13].innerHTML = parseFloat(imp472[2]).toFixed(2);
-		document.getElementById("results-row-2").childNodes[15].innerHTML = parseFloat(val472).toFixed(2);
+		document.getElementById("results-row-2").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
+		document.getElementById("results-row-2").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
+		document.getElementById("results-row-2").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
+		document.getElementById("results-row-2").childNodes[15].innerHTML = parseFloat(vale).toFixed(2);
 		document.getElementById("results-row-2").childNodes[17].innerHTML = parseFloat(totals[0]).toFixed(2);
 		
 		//calculate IEC VIP arancel, IVA
-		imp472[0] = vdecl*0.1;
-		imp472[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
-		imp472[2] = Math.ceil(vdecl/100)*5;
+		impv[0] = vdecl*0.1;
+		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
+		impv[2] = Math.ceil(vdecl/100)*5;
 		
 		//calculate shipping cost
-		val472 = pesol <= 10 ? 13 : 13+(pesol-10)*1.3
+		vale = pesol <= 10 ? 13 : 13+(pesol-10)*1.3
 		
 		//calculate total
-		totals[0] = val472 + imp472[0] + imp472[1] + imp472[2];
+		totals[0] = vale + impv[0] + impv[1] + impv[2];
 		
 		//assign values in table
 		document.getElementById("results-row-3").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-3").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
 		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(pesol).toFixed(2);
-		document.getElementById("results-row-3").childNodes[9].innerHTML = parseFloat(imp472[0]).toFixed(2);
-		document.getElementById("results-row-3").childNodes[11].innerHTML = parseFloat(imp472[1]).toFixed(2);
-		document.getElementById("results-row-3").childNodes[13].innerHTML = parseFloat(imp472[2]).toFixed(2);
-		document.getElementById("results-row-3").childNodes[15].innerHTML = parseFloat(val472).toFixed(2);
+		document.getElementById("results-row-3").childNodes[9].innerHTML = parseFloat(impv[0]).toFixed(2);
+		document.getElementById("results-row-3").childNodes[11].innerHTML = parseFloat(impv[1]).toFixed(2);
+		document.getElementById("results-row-3").childNodes[13].innerHTML = parseFloat(impv[2]).toFixed(2);
+		document.getElementById("results-row-3").childNodes[15].innerHTML = parseFloat(vale).toFixed(2);
 		document.getElementById("results-row-3").childNodes[17].innerHTML = parseFloat(totals[0]).toFixed(2);
 	};
 </script>
