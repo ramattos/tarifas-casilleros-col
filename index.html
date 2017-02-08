@@ -40,6 +40,10 @@
   background: #2980b9;
 }
 
+input[type=checkbox] {
+  margin: 0px 6px;
+}
+
  
   .result-table { width: 100%; font-size: 12px; text-align: center;  }
   
@@ -49,31 +53,123 @@
   
   .param-table td { padding-left: 30px; }
   
-  .param-table td input { width: 50px; };
+  .param-table td input[type=number] { width: 66px; };
   
   .hidden { display: none; }
   
   .unhidden { display: block; }
 </style>
 <script>
-  // variable declaration
+  // variable declaration and initialization
   var vfact = 0.00;
   var vdecl = 0.00;
   var vaseg = 0.00;
   var pesol = 0.00;
   var pesold = 0.00;
-  var impv = [ 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro
+  var impv = [ 0.00, 0.00, 0.00, 0.00 ]; //arancel, IVA, seguro, recargo combustible (coordinadora)
+  var liba = 0.00;
   var vale = 0.00;
   var total = 0.00;
+  var numpaq = 0;
   var fuebog = false;
-  var consol = false;
+  var consol = false;    
+  var pvc = false;
+  var pvl = 0.00;
+  var pvw = 0.00;
+  var pvh = 0.00;
+  
+  function fillTable (row,a,b,c,d,e,f,g,h,i) {
+	//Render
+	document.getElementById(row).childNodes[3].innerHTML = a;
+	document.getElementById(row).childNodes[5].innerHTML = b;
+	document.getElementById(row).childNodes[7].innerHTML = c;
+	document.getElementById(row).childNodes[9].innerHTML = d;
+	document.getElementById(row).childNodes[11].innerHTML = e;
+	document.getElementById(row).childNodes[13].innerHTML = f;
+	document.getElementById(row).childNodes[15].innerHTML = g;
+	document.getElementById(row).childNodes[17].innerHTML = h;
+	document.getElementById(row).childNodes[19].innerHTML = i;
+  }
+	
+  function fillTableA(row) {
+    fillTable(	row,
+				parseFloat(vfact).toFixed(2),
+				parseFloat(vdecl).toFixed(2),
+				parseFloat(vaseg).toFixed(2),
+				parseFloat(pesold).toFixed(2),
+				parseFloat(impv[0]).toFixed(2),
+				parseFloat(impv[1]).toFixed(2),
+				parseFloat(impv[2]).toFixed(2),
+				parseFloat(vale).toFixed(2),
+				"<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>"
+			  );
+  }
+  
+  function fillTableB(row) {
+    fillTable(	row,
+				parseFloat(vfact).toFixed(2),
+				parseFloat(vdecl).toFixed(2),
+				parseFloat(vdecl).toFixed(2),
+				parseFloat(pesold).toFixed(2),
+				parseFloat(impv[0]).toFixed(2),
+				parseFloat(impv[1]).toFixed(2),
+				parseFloat(impv[2]).toFixed(2),
+				parseFloat(vale).toFixed(2),
+				"<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>"
+			  );
+  }
+  
+  function fillTableC(row,pv) { // peso volumetrico
+    fillTable(	row,
+				parseFloat(vfact).toFixed(2),
+				parseFloat(vdecl).toFixed(2),
+				parseFloat(vdecl).toFixed(2),
+				"<span style=\"text-decoration: underline;\" title=\"Peso volum&eacute;trico\">"+parseFloat(pv).toFixed(2)+"</span>",
+				parseFloat(impv[0]).toFixed(2),
+				parseFloat(impv[1]).toFixed(2),
+				parseFloat(impv[2]).toFixed(2),
+				parseFloat(vale).toFixed(2),
+				"<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>"
+			  );
+  }
+  
+  function fillTableVal(row,param=1) {
+	/* Values:
+		0	Fill with N/A
+		1	Default fill, vaseg = vdecl = vfact. This is what 4-72 uses
+		*/
+		
+	switch (param) {
+		case 0:
+			fillTable(row,"N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A");
+			break;
+		case 1:
+			fillTable(	row,
+				parseFloat(vfact).toFixed(2),
+				parseFloat(vfact).toFixed(2),
+				parseFloat(vfact).toFixed(2),
+				parseFloat(pesold).toFixed(2),
+				parseFloat(impv[0]).toFixed(2),
+				parseFloat(impv[1]).toFixed(2),
+				parseFloat(impv[2]).toFixed(2),
+				parseFloat(vale).toFixed(2),
+				"<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>"
+			  );
+			break;
+	}
+  }
+  
+  function fillNA(row) { // Fill row with N/A
+	filltable(row,"N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A","N/A");
+  }
+  
 </script>
 </head>
 <body>
 <div class="content">
   <div class="header">
     <h1 class="title">Calculadora de Tarifas de Casilleros</h1>
-    <p>El prop&oacute;sito de esta herramienta es comparar el valor de un env&iacute;o de casillero entre diferentes proveedores (por ahora solamente 4-72 e IEC Logistic).</p>
+    <!-- <p>El prop&oacute;sito de esta herramienta es comparar el valor de un env&iacute;o de casillero entre diferentes proveedores (por ahora solamente 4-72 e IEC Logistic).</p> -->
   </div>
   <div class="parameters">
     <table class="param-table">
@@ -95,6 +191,13 @@
 	    <th>Peso (en libras):</th>
 		<td><input type="number" min="0.01" max="110.00" step="0.01" name="pesol" value="0.01" /></td>
 		<td><label><input type="checkbox" name="fuebog" value="" >¿Fuera de Bogot&aacute;?</label></td>
+	  </tr>
+	  <tr>
+		<td colspan="3" style="text-align: center;" id="validation" style="color: red;">&nbsp;</td>
+	  </tr>
+	  <tr>
+		<td><label>¿Consolidado?<input type="checkbox" name="consol" value="" ></label> <input type="number" name="numpaq" min="2" max="20" style="width: 3em;" step="1" value="" pattern="[0-9]*" disabled> <a title="Cantidad de trackings consolidados"><span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
+		<td colspan="2"><label>Peso Volum&eacute;trico<input type="checkbox" name="pvcheck" value="" ></label> <label>L <input type="number" title="Largo" name="pvl" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>W <input type="number" title="Ancho" name="pvw" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>H <input type="number" title="Altura" name="pvh" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <a title="Todas las medidas en pulgadas.&#013;S&oacute;lo aplica para algunos casilleros"> <span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
 	  </tr>
 	  <tr>
 		<td colspan="3" style="text-align: center;" id="validation" style="color: red;">&nbsp;</td>
@@ -190,6 +293,18 @@
 			<td></td>
 			<td></td>
 		</tr>
+		<tr class="row" id="results-row-7">
+			<td style="font-weight: bold;">Coordinadora USA</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
 	</table>
   </div>
 </div>
@@ -207,6 +322,21 @@
 			document.getElementsByName('vaseg')[0].value = document.getElementsByName('vfact')[0].value;
 		}
 	};
+	
+	document.getElementsByName('consol')[0].onchange = function() {
+		document.getElementsByName('numpaq')[0].disabled = !this.checked;
+		document.getElementsByName('numpaq')[0].value = !this.checked ? "" : "2";
+	};
+	
+	document.getElementsByName('pvcheck')[0].onchange = function() {
+		document.getElementsByName('pvl')[0].disabled = !this.checked;
+		document.getElementsByName('pvw')[0].disabled = !this.checked;
+		document.getElementsByName('pvh')[0].disabled = !this.checked;
+	};
+	
+	document.getElementsByName('numpaq')[0].onkeyup = function() {
+		document.getElementsByName('numpaq')[0].value = Math.max(2,Math.round(document.getElementsByName('numpaq')[0].value));
+	}
 	
 	document.getElementsByName('vfact')[0].onkeyup = function() {
 		if (document.getElementsByName('vdcheck')[0].checked) {
@@ -232,10 +362,22 @@
 		vaseg = Math.min(vfact,document.getElementsByName('vaseg')[0].value);
 		pesol = document.getElementsByName('pesol')[0].value;
 		pesold = pesol;
-		fuebog = document.getElementsByName('fuebog')[0].value
+		fuebog = document.getElementsByName('fuebog')[0].checked;
+		pvc = document.getElementsByName('pvcheck')[0].checked;
+		consol = document.getElementsByName('consol')[0].checked;
+		numpaq = document.getElementsByName('numpaq')[0].value;
+		
+		if (pvc) {
+			pvl = document.getElementsByName('pvl')[0].value;
+			pvw = document.getElementsByName('pvw')[0].value;
+			pvh = document.getElementsByName('pvh')[0].value;
+		}
+		
 		
 		//round pesol
 		pesol = Math.ceil(pesol);
+		
+		/* 4-72 */
 		
 		//calculate 4-72 arancel, IVA
 		if (pesold <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
@@ -255,7 +397,7 @@
 		total = vale + impv[0] + impv[1] + impv[2];
 		
 		//assign values in table
-		document.getElementById("results-row-1").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
+		/*document.getElementById("results-row-1").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[5].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[7].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-1").childNodes[9].innerHTML = parseFloat(pesold).toFixed(2);
@@ -263,16 +405,23 @@
 		document.getElementById("results-row-1").childNodes[13].innerHTML = parseFloat(impv[1]).toFixed(2);
 		document.getElementById("results-row-1").childNodes[15].innerHTML = parseFloat(impv[2]).toFixed(2);
 		document.getElementById("results-row-1").childNodes[17].innerHTML = parseFloat(vale).toFixed(2);
-		document.getElementById("results-row-1").childNodes[19].innerHTML = "<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>";
+		document.getElementById("results-row-1").childNodes[19].innerHTML = "<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>";*/
+		
+		if (!consol) {
+			fillTableVal("results-row-1");
+		}
+		else {
+			fillTableVal("results-row-1",0);
+		}
 		
 		//calculate IEC arancel, IVA
 		impv[0] = vdecl*0.1;
 		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
-		//impv[2] = Math.ceil(vaseg/100)*5;
-		impv[2] = 5;
-		
+		impv[2] = Math.max(5,vaseg*0.05);
+				
 		//calculate shipping cost
-		vale = pesol <= 10 ? 17 : 17+(pesol-10)*1.7
+		//vale = pesol <= 10 ? 17 : 17+(pesol-10)*1.7
+		vale = Math.max(17,pesol*1.7)
 		
 		//calculate total
 		total = vale + impv[0] + impv[1] + impv[2];
@@ -280,7 +429,7 @@
 		//assign values in table
 		document.getElementById("results-row-2").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-2").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(Math.min(100.00,vaseg)).toFixed(2);
+		document.getElementById("results-row-2").childNodes[7].innerHTML = parseFloat(vaseg).toFixed(2);
 		document.getElementById("results-row-2").childNodes[9].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-2").childNodes[11].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-2").childNodes[13].innerHTML = parseFloat(impv[1]).toFixed(2);
@@ -291,11 +440,11 @@
 		//calculate IEC VIP arancel, IVA
 		impv[0] = vdecl*0.1;
 		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
-		//impv[2] = Math.ceil(vaseg/100)*5;
-		impv[2] = 5;
-		
+		impv[2] = Math.max(5,vaseg*0.05);
+				
 		//calculate shipping cost
-		vale = pesol <= 10 ? 13 : 13+(pesol-10)*1.3
+		//vale = pesol <= 10 ? 13 : 13+(pesol-10)*1.3
+		vale = Math.max(13,pesol*1.3)
 		
 		//calculate total
 		total = vale + impv[0] + impv[1] + impv[2];
@@ -303,7 +452,7 @@
 		//assign values in table
 		document.getElementById("results-row-3").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-3").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
-		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(Math.min(100.00,vaseg)).toFixed(2);
+		document.getElementById("results-row-3").childNodes[7].innerHTML = parseFloat(vaseg).toFixed(2);
 		document.getElementById("results-row-3").childNodes[9].innerHTML = parseFloat(pesold).toFixed(2);
 		document.getElementById("results-row-3").childNodes[11].innerHTML = parseFloat(impv[0]).toFixed(2);
 		document.getElementById("results-row-3").childNodes[13].innerHTML = parseFloat(impv[1]).toFixed(2);
@@ -325,16 +474,8 @@
 		total = vale + impv[0] + impv[1] + impv[2];
 		
 		//assign values in table
-		if (pesol > 4) {
-			document.getElementById("results-row-4").childNodes[3].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[5].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[7].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[9].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[11].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[13].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[15].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[17].innerHTML = "N/A";
-			document.getElementById("results-row-4").childNodes[19].innerHTML = "N/A";
+		if (pesol > 4 || consol) {
+			fillTableVal("results-row-4",0);
 		}
 		else {
 			document.getElementById("results-row-4").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
@@ -362,7 +503,6 @@
 		document.getElementById("results-row-5").childNodes[17].innerHTML = parseFloat(vale).toFixed(2);
 		document.getElementById("results-row-5").childNodes[19].innerHTML = "<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>";
 		
-		
 		/* USAlo-TRAElo */
 		
 		//calculate arancel, IVA
@@ -386,6 +526,34 @@
 		document.getElementById("results-row-6").childNodes[15].innerHTML = parseFloat(impv[2]).toFixed(2);
 		document.getElementById("results-row-6").childNodes[17].innerHTML = parseFloat(vale).toFixed(2);
 		document.getElementById("results-row-6").childNodes[19].innerHTML = "<a href=\"https://www.google.com/search?q="+parseFloat(total).toFixed(2)+"+USD+to+COP\" target=\"_blank\">"+parseFloat(total).toFixed(2)+"</a>";
+		
+		/* Coordinadora USA */
+		
+		//volumetric weight or shipping weight?
+		if (pvc) {
+			pesol = Math.max(pesol,Math.ceil((pvl*pvw*pvh)/250));
+		}
+		
+		//calculate arancel, IVA
+		impv[0] = vdecl*0.1;
+		impv[1] = vdecl <= 200 ? 0 : vdecl*0.209;
+		impv[2] = Math.max(1.5,vdecl*0.015);
+		impv[3] = pesol < 10 ? 1 : pesol < 30 ? 2 : pesol < 60 ? 3 : 4;
+		
+		liba = !fuebog ? pesol<15 ? 2.5 : 2.75 : pesol<15 ? 2.75 : 2.95;
+				
+		vale = 16+Math.max(0,pesol-6)*liba;
+				
+		//calculate total
+		total = 1.035*(vale + impv[0] + impv[1] + impv[2] + impv[3] + Math.max(2,2*numpaq));
+		
+		//Render
+		if (pvc) {
+			fillTableC("results-row-7",pesol);
+		}
+		else {
+			fillTableB("results-row-7");
+		}
 	};
 </script>
 </body>
