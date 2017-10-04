@@ -245,8 +245,8 @@ input[type=checkbox] {
 			<td></td>
 			<td></td>
 		</tr>
-		<!-- <tr class="row" id="results-row-3">
-			<td style="font-weight: bold;">IEC Logistics<br>(VIP Laneros)</td>
+		<tr class="row" id="results-row-3">
+			<td style="font-weight: bold;">Expreso</td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -256,7 +256,7 @@ input[type=checkbox] {
 			<td></td>
 			<td></td>
 			<td></td>
-		</tr> -->
+		</tr>
 		<tr class="row" id="results-row-4">
 			<td style="font-weight: bold;"><a href="http://www.pedidosausa.com/index.php?_m=knowledgebase&_a=viewarticle&kbarticleid=20&nav=0">Pedidos a USA</a><br>20x20x25cm</td>
 			<td></td>
@@ -533,6 +533,22 @@ input[type=checkbox] {
 		else {
 			fillTableB("results-row-7");
 		}
+		
+		/* Expreso */
+		
+		//calculate arancel, IVA
+		impv[0] = 0;
+		impv[1] = 0;
+		impv[2] = Math.ceil(vaseg/100)*5;
+		
+		vale = pesol<2 ? 4 : pesol<3 ? 7 : pesol<4 ? 9 : pesol<5 ? 11 : 2.5*pesol;
+		
+		//calculate total
+		total = vale + impv[2];
+		
+		//render
+		fillTableB("results-row-3");
+		
 	};
 </script>
 </body>
