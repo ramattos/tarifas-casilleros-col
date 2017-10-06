@@ -385,13 +385,16 @@ input[type=checkbox] {
 		else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
 		
 		//calculate seguro
-		if (vfact > 100) impv[2] = vfact*0.01;
+		if (vfact > 100) impv[2] = vfact*0.0101+0.75;
 		else impv[2] = 0.00;
 		
 		//calculate shipping cost
-		vale = 5;
-		if (pesol <= 4.00) { vale += ((pesol-1)*3); }
-		else { vale += (9.2+((pesol-4)*2)); }
+		//vale = 5;
+		//if (pesol <= 4.00) { vale += ((pesol-1)*3); }
+		//else { vale += (9.2+((pesol-4)*2)); }
+		vale = 6.5;
+		if (pesol <= 4.00) { vale += ((pesol-1)*4); }
+		else { vale += (12+((pesol-4)*3)); }
 		
 		//calculate total
 		total = vale + impv[0] + impv[1] + impv[2];
