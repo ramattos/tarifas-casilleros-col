@@ -175,21 +175,21 @@ input[type=checkbox] {
     <table class="param-table">
 	  <tr>
 		<th>Valor facturado (en USD):</th>
-		<td colspan="2"><input type="number" min="0.01" max="2000" step="0.01" name="vfact" value="0.01" /></td>
+		<td colspan="2"><input type="number" min="0.01" max="2000" step="0.01" name="vfact" value="100" /></td>
       </tr>
 	  <tr>
 		<th>Valor declarado (en USD):</th>
-		<td><input type="number" name="vdecl" min="0.01" max="2000" step="0.01" value="0.01" disabled></td>
+		<td><input type="number" name="vdecl" min="0.01" max="2000" step="0.01" value="100" disabled></td>
 		<td><label><input type="checkbox" name="vdcheck" checked>Igual</label></td>
 	  </tr>
 	  <tr>
 		<th>Valor asegurado (en USD):</th>
-		<td><input type="number" name="vaseg" min="100" max="2000" step="0.01" value="100"></td>
-		<td><label><input type="checkbox" name="vacheck">Igual</label></td>
+		<td><input type="number" name="vaseg" min="100" max="2000" step="0.01" value="100" disabled></td>
+		<td><label><input type="checkbox" name="vacheck" checked>Igual</label></td>
 	  </tr>
 	  <tr>
 	    <th>Peso (en libras):</th>
-		<td><input type="number" min="0.01" max="110.00" step="0.01" name="pesol" value="0.01" /></td>
+		<td><input type="number" min="0.01" max="110.00" step="0.01" name="pesol" value="1.00" /></td>
 		<td><label><input type="checkbox" name="fuebog" value="" >¿Fuera de Bogot&aacute;?</label></td>
 	  </tr>
 	  <tr>
@@ -295,6 +295,18 @@ input[type=checkbox] {
 		</tr>
 		<tr class="row" id="results-row-7">
 			<td style="font-weight: bold;">Coordinadora USA</td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+			<td></td>
+		</tr>
+		<tr class="row" id="results-row-8">
+			<td style="font-weight: bold;">Import Am&eacute;rica</td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -551,6 +563,21 @@ input[type=checkbox] {
 		
 		//render
 		fillTableB("results-row-3");
+		
+		/* ImportAmerica */
+		
+		//calculate arancel, IVA
+		impv[0] = 0;
+		impv[1] = 0;
+		impv[2] = Math.ceil(vaseg/100)*5;
+		
+		vale = Math.max(17,pesol*(pesol<21 ? 1.7 : pesol<31 ? 1.5 : 1.4));
+		
+		//calculate total
+		total = vale + impv[2];
+		
+		//render
+		fillTableB("results-row-8");
 		
 	};
 </script>
