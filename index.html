@@ -190,13 +190,13 @@ input[type=checkbox] {
 	  <tr>
 	    <th>Peso (en libras):</th>
 		<td><input type="number" min="0.01" max="110.00" step="0.01" name="pesol" value="1.00" /></td>
-		<td><label><input type="checkbox" name="fuebog" value="" >¿Fuera de Bogot&aacute;?</label></td>
+		<td><label><input type="checkbox" name="fuebog" value="" >Â¿Fuera de Bogot&aacute;?</label></td>
 	  </tr>
 	  <tr>
 		<td colspan="3" style="text-align: center;" id="validation" style="color: red;">&nbsp;</td>
 	  </tr>
 	  <tr>
-		<td><label>¿Consolidado?<input type="checkbox" name="consol" value="" ></label> <input type="number" name="numpaq" min="2" max="20" style="width: 3em;" step="1" value="" pattern="[0-9]*" disabled> <a title="Cantidad de trackings consolidados"><span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
+		<td><label>Â¿Consolidado?<input type="checkbox" name="consol" value="" ></label> <input type="number" name="numpaq" min="2" max="20" style="width: 3em;" step="1" value="" pattern="[0-9]*" disabled> <a title="Cantidad de trackings consolidados"><span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
 		<td colspan="2"><label>Peso Volum&eacute;trico<input type="checkbox" name="pvcheck" value="" ></label> <label>L <input type="number" title="Largo" name="pvl" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>W <input type="number" title="Ancho" name="pvw" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>H <input type="number" title="Altura" name="pvh" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <a title="Todas las medidas en pulgadas.&#013;S&oacute;lo aplica para algunos casilleros"> <span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
 	  </tr>
 	  <tr>
@@ -391,25 +391,46 @@ input[type=checkbox] {
 		
 		/* 4-72 */
 		
-		//calculate 4-72 arancel, IVA
-		if (pesold <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
-		else if (vfact <= 200) { impv[0] = vfact*0.1; impv[1] = 0.00; }
-		else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
-		
-		//calculate seguro
-		if (vfact > 100) impv[2] = vfact*0.0101+0.75;
-		else impv[2] = 0.00;
-		
 		//calculate shipping cost
 		//vale = 5;
 		//if (pesol <= 4.00) { vale += ((pesol-1)*3); }
 		//else { vale += (9.2+((pesol-4)*2)); }
-		vale = 6.5;
-		if (pesol <= 4.00) { vale += ((pesol-1)*4); }
-		else { vale += (12+((pesol-4)*3)); }
+		//if (pesol <= 4.00) { vale += ((pesol-1)*4); }
+		//else { vale += (12+((pesol-4)*3)); }
+		
+		switch (pesol) {
+			case 0:
+				vale = 6.5;
+				break;
+			case 1:
+			case 2:
+			case 3:
+				vale = 6.5 + (pesol - 1)*4;
+				break;
+			case 4: 
+			case 5: 
+			case 6:
+				vale = 17 + (pesol - 4)*1.5;
+				break;
+			default:
+				vale = 27.5 + (pesol - 7)*3;
+		}
+		
+		//calculate 4-72 arancel, IVA
+		//if (pesold <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
+		//else if (vfact <= 200) { impv[0] = vfact*0.1; impv[1] = 0.00; }
+		//else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
+		impv[0] = vfact*0.101+0.75;
+		impv[1] = vfact <= 200 ? 0 : vfact*0.21108 + 1.57
+		impv[2] = vfact <= 100 ? 0 : vfact*0.01;
+		impv[3] = 0.04 * ( impv[0] + impv[1] ); // 4% costo transacción
+		
+		//calculate seguro
+		//if (vfact > 100) impv[2] = vfact*0.0101+0.75;
+		//else impv[2] = 0.00;
 		
 		//calculate total
-		total = vale + impv[0] + impv[1] + impv[2];
+		total = vale + impv[0] + impv[1] + impv[2] + impv[3];
 		
 		//assign values in table
 		/*document.getElementById("results-row-1").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
