@@ -1,5 +1,8 @@
 <html>
 <head>
+<meta charset="UTF-8">
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="es">
 <style>
   body { font-family: "Helvetica Neue", Helvetica, Arial; width: 1024px; margin-left: 40px; -webkit-font-smoothing: antialiased; font-smoothing: antialiased; }
   
@@ -306,7 +309,7 @@ input[type=checkbox] {
 			<td></td>
 		</tr>
 		<tr class="row" id="results-row-8">
-			<td style="font-weight: bold;">Import Am&eacute;rica</td>
+			<td style="font-weight: bold;">DBL Express</td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -586,17 +589,18 @@ input[type=checkbox] {
 		//render
 		fillTableB("results-row-3");
 		
-		/* ImportAmerica */
+		/* DBL Express */
+		
+		vale = Math.max(19.9,1.99*pesol);
 		
 		//calculate arancel, IVA
-		impv[0] = 0;
-		impv[1] = 0;
-		impv[2] = Math.ceil(vaseg/100)*5;
-		
-		vale = Math.max(17,pesol*(pesol<21 ? 1.7 : pesol<31 ? 1.5 : 1.4));
+		impv[0] = vdecl * 0.1;
+		impv[1] = vdecl <= 200 ? 0 : vdecl * 0.209;
+		impv[2] = Math.max(5,vaseg*0.015);
+		impv[3] = Math.min(3.3,(vale + impv[0] + impv[1])*0.035);
 		
 		//calculate total
-		total = vale + impv[2];
+		total = vale + impv[0] + impv[1] + impv[2] + impv[3];
 		
 		//render
 		fillTableB("results-row-8");
