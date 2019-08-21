@@ -424,7 +424,7 @@ input[type=checkbox] {
 		//if (pesold <= 4.40) { impv[0] = 0.00; impv[1] = 0.00; }
 		//else if (vfact <= 200) { impv[0] = vfact*0.1; impv[1] = 0.00; }
 		//else { impv[0] = vfact*0.1; impv[1] = vfact*0.19; }
-		impv[0] = vfact*0.101+0.75;
+		impv[0] = pesold <= 4.40 ? 0 : vfact*0.101+0.75;
 		impv[1] = vfact <= 200 ? 0 : vfact*0.21108 + 1.57
 		impv[2] = vfact <= 100 ? 0 : vfact*0.01;
 		impv[3] = 0.04 * ( impv[0] + impv[1] ); // 4% costo transacción
