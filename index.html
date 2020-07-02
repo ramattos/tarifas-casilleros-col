@@ -322,7 +322,7 @@ input[type=checkbox] {
 		</tr>
 	</table>
   </div>
-  <div id="footer"><p style="text-align: center; font-size: 0.7em;"><em>&Uacute;ltima actualizaci&oacute;n: 2019-08-21</em></p></div>
+  <div id="footer"><p style="text-align: center; font-size: 0.7em;"><em>&Uacute;ltima actualizaci&oacute;n: 2020-07-02</em></p></div>
 </div>
 <script>
 	document.getElementsByName('vdcheck')[0].onchange = function() {
@@ -527,10 +527,10 @@ input[type=checkbox] {
 		//calculate arancel, IVA
 		impv[0] = 0;
 		impv[1] = 0;
-		impv[2] = Math.ceil(vaseg/100)*5;
+		impv[2] = Math.ceil(vaseg/100)*10;
 		
 		//calculate shipping cost
-		vale = Math.max(21,2.1*pesol);
+		vale = Math.max(22,2.2*pesol);
 		
 		//calculate total
 		total = vale + impv[0] + impv[1] + impv[2];
