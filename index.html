@@ -73,13 +73,14 @@ input[type=checkbox] {
   var liba = 0.00;
   var vale = 0.00;
   var total = 0.00;
-  var numpaq = 0;
+  var numpaq = 1;
   var fuebog = false;
   var consol = false;    
   var pvc = false;
   var pvl = 0.00;
   var pvw = 0.00;
   var pvh = 0.00;
+  var arancel = false;
   
   function fillTable (row,a,b,c,d,e,f,g,h,i) {
 	//Render
@@ -199,7 +200,7 @@ input[type=checkbox] {
 		<td colspan="3" style="text-align: center;" id="validation" style="color: red;">&nbsp;</td>
 	  </tr>
 	  <tr>
-		<td><label>&iquest;Consolidado?<input type="checkbox" name="consol" value="" ></label> <input type="number" name="numpaq" min="2" max="20" style="width: 3em;" step="1" value="" pattern="[0-9]*" disabled> <a title="Cantidad de trackings consolidados"><span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
+		<td><label>&iquest;Consolidado?<input type="checkbox" name="consol" value="" ></label> <input type="number" name="numpaq" min="1" max="20" style="width: 3em;" step="1" value="1" pattern="[0-9]*" disabled> <a title="Cantidad de trackings consolidados"><span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
 		<td colspan="2"><label>Peso Volum&eacute;trico<input type="checkbox" name="pvcheck" value="" ></label> <label>L <input type="number" title="Largo" name="pvl" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>W <input type="number" title="Ancho" name="pvw" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <label>H <input type="number" title="Altura" name="pvh" min="1" max="100" style="width: 3em;" step="0.1" value="1" disabled></label> <a title="Todas las medidas en pulgadas.&#013;S&oacute;lo aplica para algunos casilleros"> <span style="color: blue; font-size: 0.8em; text-decoration: underline;">?</span></a></td>
 	  </tr>
 	  <tr>
@@ -550,21 +551,38 @@ input[type=checkbox] {
 		
 		//volumetric weight or shipping weight?
 		if (pvc) {
-			pesol = Math.max(pesol,Math.ceil((pvl*pvw*pvh)/250));
+			pesol = Math.max(pesol,Math.ceil((pvl*pvw*pvh)/300));
 		}
 		
 		//calculate arancel, IVA
-		impv[0] = vdecl*0.1;
-		impv[1] = vdecl <= 200 ? 0 : vdecl*0.209;
-		impv[2] = Math.max(1.5,vdecl*0.015);
-		impv[3] = pesol < 10 ? 1 : pesol < 30 ? 2 : pesol < 60 ? 3 : 4;
+		impv[0] = vdecl <= 200 ? 0 : vdecl*0.1;
+		impv[1] = (!arancel && vdecl <= 200) ? 0 : vdecl*0.209;
+		impv[2] = Math.max(1.5,vdecl*0.015); // seguro
+		impv[3] = pesol < 5 ? 1 : pesol < 10 ? 2 : pesol < 30 ? 3 : pesol < 60 ? 4 : 5; // fuel
 		
-		liba = !fuebog ? pesol<15 ? 2.5 : 2.75 : pesol<15 ? 2.75 : 2.95;
+		liba = !fuebog ? pesol<80 ? 2.5 : 2.30 : pesol<80 ? 2.75 : 2.5;
 				
-		vale = 16+Math.max(0,pesol-6)*liba;
+		switch(pesol) {
+			case 0:
+			case 1: vale = 8;
+					break;
+			case 2:
+			case 3:
+			case 4:	vale = 12 + 2*(pesol-2)
+					break;
+			case 5:
+			case 6: vale = 17 * (pesol-5);
+					break;
+			default:
+					vale = 18 + liba*(pesol-6);
+					break;
+		}
 				
 		//calculate total
-		total = 1.035*(vale + impv[0] + impv[1] + impv[2] + impv[3] + Math.max(2,2*numpaq));
+		total = vale + impv[0] + impv[1] + impv[2] + impv[3] + 0.25 + (numpaq<2?1:Math.max(2,2*numpaq));
+		// shipping + arancel + iva + fuel + nationalization + logistics
+		total += Math.max(1,total*0.035); // forma de pago
+		
 		
 		//Render
 		if (pvc) {
