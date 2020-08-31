@@ -497,7 +497,7 @@ input[type=checkbox] {
 		vale = 15;
 		
 		//calculate total
-		total = vale + impv[0] + impv[1] + impv[2];
+		total = vale + impv[0] + impv[1] + impv[2] + 0.25*pesol; // 0.25xlb = gestión aduana
 		
 		//assign values in table
 		if (pesol > 4) {
@@ -518,7 +518,7 @@ input[type=checkbox] {
 		//no, seriously, calculate shipping cost
 		impv[2] = Math.max(5,vaseg*0.05);
 		vale = Math.max(14,pesol*2);
-		total = vale + impv[0] + impv[1] + impv[2];
+		total = vale + impv[0] + impv[1] + impv[2] + 0.25*pesol; // 0.25xlb = gestión aduana
 		document.getElementById("results-row-5").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
 		document.getElementById("results-row-5").childNodes[5].innerHTML = parseFloat(vdecl).toFixed(2);
 		document.getElementById("results-row-5").childNodes[7].innerHTML = parseFloat(vaseg).toFixed(2);
