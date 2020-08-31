@@ -316,7 +316,7 @@ input[type=checkbox] {
 			<td></td>
 		</tr>
 		<tr class="row" id="results-row-8">
-			<td style="font-weight: bold;">DBL Express</td>
+			<td style="font-weight: bold;">Deblex</td>
 			<td></td>
 			<td></td>
 			<td></td>
@@ -577,7 +577,7 @@ input[type=checkbox] {
 			case 4:	vale = 12 + 2*(pesol-2)
 					break;
 			case 5:
-			case 6: vale = 17 * (pesol-5);
+			case 6: vale = 17 + (pesol-5);
 					break;
 			default:
 					vale = 18 + liba*(pesol-6);
@@ -613,17 +613,17 @@ input[type=checkbox] {
 		//render
 		fillTableB("results-row-3");
 		
-		/* DBL Express */
+		/* Deblex */
 		
-		vale = Math.max(19.9,1.99*pesol);
+		vale = pesol < 7 ? 14 : pesol < 30 ? 1.99*pesol : pesol < 50 ? 1.75*pesol : 1.5*pesol; // fuel
 		
-		//calculate arancel, IVA
+		//calculate arancel, IVA, seguro
 		impv[0] = (!arancel && vdecl<=200) ? 0 : vdecl * 0.1;
 		impv[1] = vdecl <= 200 ? 0 : vdecl * 0.209;
-		impv[2] = Math.max(5,vaseg*0.015);
-		impv[3] = Math.min(3.3,(vale + impv[0] + impv[1])*0.035);
+		impv[2] = 5;
+		impv[3] = 7; // $5 Logistics +  $2 Import
 		
-		//calculate total
+		//total = Flete + Arancel + IVA + Seguro + Importacion + Logistica
 		total = vale + impv[0] + impv[1] + impv[2] + impv[3];
 		
 		//render
