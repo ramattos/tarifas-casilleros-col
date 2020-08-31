@@ -465,15 +465,15 @@ input[type=checkbox] {
 		
 		//calculate IEC arancel, IVA
 		impv[0] = (!arancel && vdecl <= 200) ? 0 : vdecl*0.1;
-		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.19;
-		impv[2] = Math.max(5,vaseg*0.05);
+		impv[1] = vdecl <= 200 ? 0.00 : vdecl*0.22;
+		impv[2] = 5; // 
+		//impv[2] = Math.max(5,vaseg*0.05);
 				
 		//calculate shipping cost
-		//vale = pesol <= 10 ? 17 : 17+(pesol-10)*1.7
-		vale = Math.max(17,pesol*1.7)
+		vale = Math.max(13,pesol*1.3)
 		
 		//calculate total
-		total = vale + impv[0] + impv[1] + impv[2];
+		total = vale + impv[0] + impv[1] + impv[2] + (numpaq<2?0:numpaq<6?2.5:5);
 		
 		//assign values in table
 		document.getElementById("results-row-2").childNodes[3].innerHTML = parseFloat(vfact).toFixed(2);
